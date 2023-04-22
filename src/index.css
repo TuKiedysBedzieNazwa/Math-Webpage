@@ -1,0 +1,19 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap'); */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .btn-primary {
+        @apply bg-white/20 text-white text-3xl px-10 h-15 rounded-md
+    }
+    .btn-pressed {
+        @apply bg-white text-black text-3xl px-10 h-15 rounded-md
+    }
+    .bg{
+        @apply bg-black
+    }
+}
+

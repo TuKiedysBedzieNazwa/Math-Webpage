@@ -1,0 +1,35 @@
+{
+  "name": "mathwebpagev2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.5.3",
+    "@react-three/drei": "^9.64.0",
+    "@react-three/fiber": "^8.12.0",
+    "@react-three/postprocessing": "^2.7.1",
+    "@types/three": "^0.150.1",
+    "antd": "^5.3.3",
+    "autoprefixer": "^10.4.14",
+    "framer-motion": "^10.10.0",
+    "gltfjsx": "^6.1.4",
+    "postcss": "^8.4.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.10.0",
+    "recharts": "^2.5.0",
+    "tailwindcss": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.2.0"
+  }
+}

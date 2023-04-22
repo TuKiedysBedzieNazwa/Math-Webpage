@@ -1,0 +1,21 @@
+{
+    "navbar":{
+        "hidden":{
+            "y": "-100%"
+        },
+        "visible":{
+            "y": 0,
+            "transition":{
+                "delay": 1.7,
+                "duration": 0.4,
+                "type": "spring"
+            }
+        }
+    },
+    "navbuttonhover": {
+        "scale": 1.2,
+        "rotateZ": "20deg",
+        "x": -10
+    }
+
+}
