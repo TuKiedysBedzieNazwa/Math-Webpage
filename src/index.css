@@ -7,10 +7,10 @@
 
 @layer components {
     .btn-primary {
-        @apply bg-white/20 text-white text-3xl px-10 h-15 rounded-md
+        @apply bg-white/20 text-white text-2xl px-9 h-12 rounded-md
     }
     .btn-pressed {
-        @apply bg-white text-black text-3xl px-10 h-15 rounded-md
+        @apply bg-white text-black text-2xl px-9 h-12 rounded-md
     }
     .bg{
         @apply bg-black

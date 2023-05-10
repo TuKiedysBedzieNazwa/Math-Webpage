@@ -1,13 +1,14 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Box, Text, OrbitControls } from "@react-three/drei";
-import { Mesh, Group } from "three";
+import React, { useRef, useEffect, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Box, Text, SpotLight, Plane, useScroll } from "@react-three/drei";
+import { Mesh, Group, Object3D, SpotLight as SP } from "three";
 
 
-const Cube = ({ sliders }: {sliders: any}) => {
+const Cube = ({ sliders, cubeMoveRef }: any) => {
 
-    const groupRef = useRef<Group>(null!);
+    const cubeRef = useRef<Group>(null!);
     const enterAnim = useRef<number>(4);
+    const data = useScroll();
 
 
     const cubeRefs: any = {
@@ -88,13 +89,14 @@ const Cube = ({ sliders }: {sliders: any}) => {
                 }
             }
         }
+        cubeMoveRef.current.visible = false;
     }, [])
 
     useFrame((state, delta) => {
         // Rotate Effect
-        groupRef.current.rotation.y += delta / 2 * enterAnim.current;
-        groupRef.current.rotation.x = Math.sin(groupRef.current.rotation.y) / (2 / enterAnim.current) ;
-        groupRef.current.position.y = Math.sin(groupRef.current.rotation.y * 3) / 2;
+        cubeRef.current.rotation.y += delta / 2 * enterAnim.current;
+        cubeRef.current.rotation.x = Math.sin(cubeRef.current.rotation.y) / (2 / enterAnim.current) ;
+        cubeRef.current.position.y = Math.sin(cubeRef.current.rotation.y * 3) / 2;
 
         if(enterAnim.current > 1){
             enterAnim.current -= 0.02;
@@ -102,8 +104,6 @@ const Cube = ({ sliders }: {sliders: any}) => {
         }
 
         textRefs.x.f.current.position.x = 0.4;
-
-
         // let val = Math.sin(groupRef.current.rotation.y * 3) / 10;
 
         let keys = Object.keys(cubeRefs);
@@ -125,48 +125,81 @@ const Cube = ({ sliders }: {sliders: any}) => {
                 let currentRef = cubeRefs[keys[i]][secondKeys[j]].current;
                 currentRef.scale[keys[2 - i]] = sliders[keys[i]].current / 10;
 
-
                 keys[i] == 'y' ? null :
-                    currentRef.position.y > 0 ? currentRef.position.y = sliders.y.current / 20 - 0.05 : currentRef.position.y = -sliders.y.current / 20 + 0.05;
-
+                    currentRef.position.y > 0 ? 
+                        currentRef.position.y = sliders.y.current / 20 - 0.05 : currentRef.position.y = -sliders.y.current / 20 + 0.05;
                 keys[i] == 'z' ? null :
-                    currentRef.position.x > 0 ? currentRef.position.x = sliders.z.current / 20 + 0.05 : currentRef.position.x = -sliders.z.current / 20 - 0.05;
-
+                    currentRef.position.x > 0 ? 
+                        currentRef.position.x = sliders.z.current / 20 + 0.05 : currentRef.position.x = -sliders.z.current / 20 - 0.05;
                 keys[i] == 'x' ? null :
-                    currentRef.position.z > 0 ? currentRef.position.z = sliders.x.current / 20 + 0.05 : currentRef.position.z = -sliders.x.current / 20 - 0.05;
+                    currentRef.position.z > 0 ? 
+                        currentRef.position.z = sliders.x.current / 20 + 0.05 : currentRef.position.z = -sliders.x.current / 20 - 0.05;
 
                 // for(let k=0; k<keys.length; k++){
-
                 //     // pulse Effect (depend on Rotate Effect)
-                //     // currentRef.position[keys[k]] == 0 ? null :
-                //     //     currentRef.position[keys[k]] > 0 ? currentRef.position[keys[k]] += val : currentRef.position[keys[k]] -= val;
+                //     currentRef.position[keys[k]] == 0 ? null :
+                //         currentRef.position[keys[k]] > 0 ? currentRef.position[keys[k]] += val : currentRef.position[keys[k]] -= val;
                 // }
             }
         }
+
+        if(data.offset > 0.63 && data.offset < 0.73){
+            lampRef.current.intensity = (data.offset - 0.63) * 20;
+        }
     });
 
+    const [lamp]  = useState(() => new Object3D());
+    const lampRef = useRef<SP>(null!);
+
+    useEffect(() => console.log(lampRef), []);
+
     return(
-        <group ref={groupRef}>
-            {
-                Object.keys(cubeRefs).map(content => 
-                    Object.keys(cubeRefs[content]).map(refBox => <Box ref={cubeRefs[content][refBox]}
-                    >
-                        <meshStandardMaterial />
-                    </Box>
-                ))
-            }
-            {
-                Object.keys(textRefs).map(dimension => 
-                    Object.keys(textRefs[dimension]).map(poseInDim => 
-                        <Text ref={textRefs[dimension][poseInDim]}
-                            color="white"
-                            fontSize={0.5}
-                        >
-                            <meshStandardMaterial />
-                            {`${poseInDim == 'f'? '' : '-'}` + dimension.toUpperCase()}
-                        </Text>
-                ))
-            }
+        <group ref={cubeMoveRef} position={[7, -2, 0]}>
+            <SpotLight ref={lampRef}
+                position={[1, 9, 7]}
+                angle={1.7}
+                attenuation={12}
+                intensity={0}
+                castShadow
+                distance={16}
+                penumbra={1}
+                target={lamp}
+            />
+            <primitive object={lamp}  position={[0, 0, -2]} />
+
+            <group ref={cubeRef}
+                scale={[2,2,2]}
+                castShadow
+                receiveShadow
+            >
+                {
+                    Object.keys(cubeRefs).map(content => 
+                        Object.keys(cubeRefs[content]).map(refBox =>
+                            <Box ref={cubeRefs[content][refBox]}
+                                key={`${content}${refBox}`}
+                                castShadow
+                                receiveShadow
+                            >
+                                <meshStandardMaterial />
+                            </Box>
+                    ))
+                }
+                {
+                    Object.keys(textRefs).map(dimension => 
+                        Object.keys(textRefs[dimension]).map(poseInDim =>
+                            <Text ref={textRefs[dimension][poseInDim]}
+                                color="white"
+                                fontSize={0.5}
+                                key={`${dimension}${poseInDim}`}
+                                castShadow
+                                receiveShadow
+                            >
+                                <meshStandardMaterial />
+                                {`${poseInDim == 'f'? '' : '-'}` + dimension.toUpperCase()}
+                            </Text>
+                    ))
+                }
+            </group>
         </group>
     )
 }

@@ -8,10 +8,9 @@ import {
     YAxis,
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
-import { Slider, ConfigProvider } from "antd";
+import { Slider } from "antd";
 
-
-import anims from './sinusoidAnims.json';
+import anims from './anims/sinusoidAnims.json';
 
 
 const Sinusoid = () => {
@@ -61,7 +60,7 @@ const Sinusoid = () => {
 
     const startButton = (): void => {
         setIsRunning(val => !val);
-        !isRunning && timeoutFunc(!isRunning);
+        // !isRunning && timeoutFunc(!isRunning);
     }
 
     useEffect((): void => {
@@ -88,13 +87,13 @@ const Sinusoid = () => {
     const [slider3, setSlider3] = useState<number>(350);
 
     return(
-        <motion.div className="container h-176 bg-white/10 rounded-xl mx-auto mt-20 text-7xl"
+        <motion.div className="w-192 h-96 bg-white/10 rounded-xl mx-auto text-2xl"
             variants={anims.banner}
             initial='hidden'
             animate='visible'
         >
             <div className="w-full h-full flex items-center static py-1">
-                <ResponsiveContainer width='100%' height='90%' className='text-xl relative'>
+                <ResponsiveContainer width='100%' height='90%' className='text-xs'>
                     <LineChart data={data}
                         height={3}
                         width={24}
@@ -109,10 +108,10 @@ const Sinusoid = () => {
                             animationEasing="linear"
                             animationBegin={600}
                             animationDuration={slider3}
-                            onAnimationEnd={(): void => timeoutFunc(isRunning)}
+                            // onAnimationEnd={(): void => timeoutFunc(isRunning)}
                             dataKey="h"
                             stroke="#fff"
-                            strokeWidth={4}
+                            strokeWidth={1}
                         />
                         <Tooltip content={({ payload }) => (
                                 <p className="bg-white/50 px-5 py-2 rounded-md">
@@ -124,7 +123,7 @@ const Sinusoid = () => {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-            <div className="relative bottom-160 text-white h-20 ml-16 mr-28 flex justify-between items-center">
+            <div className="relative bottom-96 text-white h-20 ml-16 mr-28 flex justify-between items-center">
                 <motion.div variants={anims.nav}>
                     MATeMAtyka wokół nas
                 </motion.div>
@@ -132,7 +131,7 @@ const Sinusoid = () => {
                     {`f(x) = ${amplitude !== 1 ? amplitude : ''}sin(${slider2}x)`}
                 </motion.div>
             </div>
-            <motion.button className={`${isRunning ? 'btn-pressed' : 'btn-primary'} relative bottom-56 ml-20`}
+            <motion.button className={`${isRunning ? 'btn-pressed' : 'btn-primary'} relative bottom-40 ml-10`}
                 onClick={startButton}
                 variants={anims.button}
                 whileHover={{ scale: 1.05 }}
@@ -142,7 +141,7 @@ const Sinusoid = () => {
             </motion.button>
             <AnimatePresence>
                 {isRunning &&
-                    <motion.div className="bg-white/20 w-5/12 h-1/2 relative bottom-172 rounded-xl ml-16 flex flex-col items-center justify-evenly text-xl text-white"
+                    <motion.div className="bg-white/20 w-5/12 h-1/2 relative bottom-112 rounded-xl ml-10 flex flex-col items-center justify-evenly text-xl text-white"
                         variants={anims.sliders}
                         exit={{ opacity: 0 }}
                     >
@@ -172,7 +171,6 @@ const Sinusoid = () => {
                     </motion.div>
                 }
             </AnimatePresence>
-
         </motion.div>
     )
 }

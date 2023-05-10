@@ -1,70 +1,70 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Scroll, ScrollControls, SoftShadows, Html } from "@react-three/drei";
-import { Group, Object3D, SpotLight as test } from "three";
-import { Stats } from "@react-three/drei";
+import React, { useRef, useEffect } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Scroll, ScrollControls, SoftShadows, Stats } from "@react-three/drei";
+import { Group } from "three";
+import { motion, useAnimationControls } from "framer-motion";
 
-import SchoolClass from "./banner/assests/Threejs/schoolClass";
-import Cube from "./banner/assests/Threejs/cube";
-import Banner from "./banner/banner";
+import SchoolClass from "./components/schoolClass";
+import Cube from "./components/cube";
+import Content from "./components/content";
 
-const HtmlTest = () => {
-
-  const { gl } = useThree();
-
-  return(
-    <Html transform portal={{ current: gl.domElement.parentNode }} >
-      <div className="bg-white">
-        rest in test
-      </div>
-    </Html>
-  )
-}
+import anims from './components/anims/mainAnims.json';
 
 
 const App = () => {
+
+  const cubeMoveRef = useRef<Group>(null!);
 
   const sliders: any = {
     x: useRef<number>(10),
     y: useRef<number>(12),
     z: useRef<number>(10)
   }
+  const sliderAnim = {
+    hidden:{
+      y: '40%',
+      opacity: 0
+    },
+    visible:{
+      y: 0,
+      opacity: 1,
+      transition:{
+        duration: 1.2
+      }
+    }
+  }
 
-  const testRef = useRef<test>(null!);
-  useEffect(() => {
-    // if(testRef.current !== null)
-      // testRef.current.target.position.x = 2;
-    // console.log(testRef);
-  }, [])
+  const areCube = sliders.x.current == sliders.y.current == sliders.z.current;
+
+  const runAnims: any = [
+    [useAnimationControls(), useRef(false)],
+    [useAnimationControls(), useRef(false)],
+    [useAnimationControls(), useRef(false)],
+    [useAnimationControls(), useRef(false)],
+    [useAnimationControls(), useRef(false)]
+  ]
 
   return (
-    <div className='bg w-screen h-screen'>
-      <Canvas camera={{ position: [0, 5, 12] }} shadows>
-        <ambientLight intensity={0.11} />
+      <div className='bg w-screen h-screen'>
+        <Canvas camera={{ position: [0, 5, 12] }} shadows>
+          <ambientLight intensity={0.012} />
+          <ScrollControls pages={8} damping={0.15}>
+            <SchoolClass cubeMoveRef={cubeMoveRef} runAnims={runAnims} />
+            <Cube sliders={sliders} cubeMoveRef={cubeMoveRef} />
+            <Scroll html>
+              <Content sliders={sliders} runAnims={runAnims}/>
+            </Scroll>
+          </ScrollControls>
+          <SoftShadows samples={15} focus={20} />
 
-        {/* <Cube sliders={sliders}/> */}
-
-
-        <ScrollControls pages={8} damping={0.15}>
-          <SchoolClass />
-
-
-          <HtmlTest />
-          {/* <Cube sliders={sliders} /> */}
-          <Scroll html>
-            <Banner />
-          </Scroll>
-        </ScrollControls>
-        <SoftShadows samples={15} focus={20} />
-        {/* <BakeShadows /> */}
-
-        <axesHelper />
-        <OrbitControls enableZoom={false} />
-        <Stats />
-      </Canvas>
-    </div>
-  );
+          {/* <axesHelper /> */}
+          {/* <OrbitControls enableZoom={false} /> */}
+          <Stats /> {/* frame monitor */}
+        </Canvas>
+      </div>
+  )
 }
+
 
 
 
