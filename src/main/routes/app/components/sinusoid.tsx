@@ -13,54 +13,84 @@ import { Slider } from "antd";
 import anims from './anims/sinusoidAnims.json';
 
 
+
+interface rechartData {
+    h: number,
+    name: string
+}
+
 const Sinusoid = () => {
 
-    const [data, setData] = useState<Array<{
-        h: number,
-        name: string
-    }>>([]);
+    const [data, setData] = useState<Array<rechartData>>([]);
     const [isRunning, setIsRunning] = useState<boolean>(false);
 
+    const [amplitude, setAmplitude] = useState<number>(1);
+    const [period, setPeriod] = useState<number>(1);
     const loop = useRef<number>(0);
-    const generatePoint = (): {
-        h: number,
-        name: string
-    } => {
 
-        const howManyPoints: number = 12 * amplitude;
+    const [intervalId, setIntervalId] = useState<number>();
 
-        if(loop.current === howManyPoints * 2) loop.current = 0;
-        loop.current++;
+    const periodArr = [0, '2π', 'π', '2π/3', 'π/2', '2π/5', 'π/3'];
+
+    const generatePoint = () => {
 
         const roots: {[key: string]: string} = {
             "0.97": "(√6 + √2)/4",
             "0.87": "√3/2",
             "0.71": "√2/2",
             "0.5": "1/2",
-            "0.26": "(√6 - √2)/4"
+            "0.26": "(√6 - √2)/4",
+            "-0.97": "-(√6 + √2)/4",
+            "-0.87": "-√3/2",
+            "-0.71": "-√2/2",
+            "-0.5": "-1/2",
+            "-0.26": "-(√6 - √2)/4",
+
+            "0.52": "(√6 - √2)/2",
+            "1.42": "√2",
+            "1.74": "√3",
+            "1.94": "(√6 + √2)/2",
+            "-0.52": "-(√6 - √2)/2",
+            "-1.42": "-√2",
+            "-1.74": "-√3",
+            "-1.94": "-(√6 + √2)/2",
+
+            "0.78": "3(√6 - √2)/4",
+            "1.5": "3/2",
+            "2.13": "3√2/2",
+            "2.61": "3√3/2",
+            "2.91": "3(√6 + √2)/4",
+            "-0.78": "-3(√6 - √2)/4",
+            "-1.5": "-3/2",
+            "-2.13": "-3√2/2",
+            "-2.61": "-3√3/2",
+            "-2.91": "-3(√6 + √2)/4",
+
         }
 
-        const number: number = Math.round(Math.sin(slider2 * (Math.PI / howManyPoints * loop.current)) * 100) / 100 * amplitude;
-        const numString: string = number.toString();
-        return {
-            h: number,
-            name: (number >= 0 ? roots[numString] : '-' + roots[numString.slice(1)]) || numString
-        };
-    }
+        let arr: rechartData[] = [];
+        
+        const howManyPoints: number = 12 * amplitude;
+        if(loop.current === howManyPoints * 2) loop.current = 0;
+        loop.current++;
 
-    const timeoutFunc = (isRunning: boolean): void => {
-
-        if(!isRunning) return;
-
-        setData([
-            ...data.slice(1),
-            generatePoint(),
-        ]);
+        for(let i=0; i<24; i++){
+            
+            const number: number = Math.round(Math.sin(period * (Math.PI * ((i + loop.current) / 12))) * 100) / 100 * amplitude;
+            const numString: string = number.toString();
+            arr.push({
+                h: number,
+                name: roots[numString] ? roots[numString] : numString
+            });
+        }
+        setData(arr);
     }
 
     const startButton = (): void => {
+
         setIsRunning(val => !val);
-        // !isRunning && timeoutFunc(!isRunning);
+
+        !isRunning ? setIntervalId(setInterval(generatePoint, 1000)) : clearInterval(intervalId);
     }
 
     useEffect((): void => {
@@ -70,21 +100,9 @@ const Sinusoid = () => {
         anims.slider[1].visible.transition.delay = 0.7;
         anims.slider[2].visible.transition.delay = 0.9;
 
-        let arr:{
-            h: number,
-            name: string
-        }[] = [];
-
-        while(arr.length < 24){
-            arr.push(generatePoint());
-        }
-        // console.log(arr);
-        setData(arr);
+        generatePoint();
     }, []);
 
-    const [amplitude, setAmplitude] = useState<number>(1);
-    const [slider2, setSlider2] = useState<number>(1);
-    const [slider3, setSlider3] = useState<number>(350);
 
     return(
         <motion.div className="w-192 h-96 bg-white/10 rounded-xl mx-auto text-2xl"
@@ -106,9 +124,8 @@ const Sinusoid = () => {
                         <Line
                             type="monotone"
                             animationEasing="linear"
-                            animationBegin={600}
-                            animationDuration={slider3}
-                            // onAnimationEnd={(): void => timeoutFunc(isRunning)}
+                            animationBegin={200}
+                            animationDuration={350}
                             dataKey="h"
                             stroke="#fff"
                             strokeWidth={1}
@@ -123,12 +140,9 @@ const Sinusoid = () => {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-            <div className="relative bottom-96 text-white h-20 ml-16 mr-28 flex justify-between items-center">
-                <motion.div variants={anims.nav}>
-                    MATeMAtyka wokół nas
-                </motion.div>
+            <div className="relative bottom-96 text-white h-20 ml-16 mr-28 flex justify-end items-center">
                 <motion.div variants={anims.recipe}>
-                    {`f(x) = ${amplitude !== 1 ? amplitude : ''}sin(${slider2}x)`}
+                    {`f(x) = ${amplitude !== 1 ? amplitude : ''}sin(${period}x)`}
                 </motion.div>
             </div>
             <motion.button className={`${isRunning ? 'btn-pressed' : 'btn-primary'} relative bottom-40 ml-10`}
@@ -140,33 +154,55 @@ const Sinusoid = () => {
                 {isRunning ? "Zatrzymaj" : "Uruchom"}
             </motion.button>
             <AnimatePresence>
-                {isRunning &&
+                {!isRunning &&
                     <motion.div className="bg-white/20 w-5/12 h-1/2 relative bottom-112 rounded-xl ml-10 flex flex-col items-center justify-evenly text-xl text-white"
                         variants={anims.sliders}
                         exit={{ opacity: 0 }}
                     >
-                        <motion.div className="w-3/4" variants={anims.slider[0]}>
-                            <Slider onChange={(value: number): void => setAmplitude(value)} 
+                        <motion.div className="w-3/4 mt-4" variants={anims.slider[0]}>
+                                <div className="flex justify-between">
+                                    <span>
+                                        Amplituda funkcji
+                                    </span>
+                                    <span>
+                                        {`( ${amplitude} )`}
+                                    </span>
+
+                                </div>
+                            <Slider className="mt-0 ml-0"
+                                onChange={(value: number): void => {
+                                    setAmplitude(value)
+                                }} 
                                 max={3}
                                 min={-3}
                                 defaultValue={amplitude}
                             />
-                            Amplituda funkcji
                         </motion.div>
                         <motion.div className="w-3/4" variants={anims.slider[1]}>
-                            <Slider onChange={(value: number): void => setSlider2(value)} 
-                                defaultValue={slider2}
+                            <div className="flex justify-between">
+                                <span>
+                                    Okres funkcji
+                                </span>
+                                <span>
+                                    {`( ${period} )`}
+                                </span>
+                            </div>
+                            <Slider className="mt-0 ml-0"
+                                onChange={(value: number): void => {
+                                    setPeriod(value);
+                                }} 
+                                defaultValue={period}
                                 min={1}
-                                max={10}
+                                max={6}
                             />
-                            To przed x'em
                         </motion.div>
-                        <motion.div className="w-3/4" variants={anims.slider[2]}>
-                            <Slider onChange={(value: number): void => setSlider3(value)} 
-                                max={1000}
-                                defaultValue={slider3}
-                            />
-                            temporary speed
+                        <motion.div className="w-3/4 mt-1 mb-3 flex justify-between" variants={anims.slider[2]}>
+                            <span>
+                                {'radian(π) = 180°'}
+                            </span>
+                            <span>
+                                {periodArr[period]}
+                            </span>
                         </motion.div>
                     </motion.div>
                 }

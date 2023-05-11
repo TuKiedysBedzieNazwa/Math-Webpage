@@ -151,8 +151,6 @@ const Cube = ({ sliders, cubeMoveRef }: any) => {
     const [lamp]  = useState(() => new Object3D());
     const lampRef = useRef<SP>(null!);
 
-    useEffect(() => console.log(lampRef), []);
-
     return(
         <group ref={cubeMoveRef} position={[7, -2, 0]}>
             <SpotLight ref={lampRef}

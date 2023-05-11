@@ -90,7 +90,7 @@ const Content = ({ sliders, runAnims }: any) => {
                         </span>
                     </div>
                     <Slider defaultValue={10}
-                        min={1}
+                        min={3}
                         max={40}
                         onChange={val => {
                             sliders.x.current = val;
@@ -106,7 +106,7 @@ const Content = ({ sliders, runAnims }: any) => {
                         </span>
                     </div>
                     <Slider defaultValue={10}
-                        min={1}
+                        min={3}
                         max={40}
                         onChange={val => {
                             sliders.y.current = val + 2;
@@ -122,7 +122,7 @@ const Content = ({ sliders, runAnims }: any) => {
                         </span>
                     </div>
                     <Slider defaultValue={10}
-                        min={1}
+                        min={3}
                         max={40}
                         onChange={val => {
                             sliders.z.current = val;

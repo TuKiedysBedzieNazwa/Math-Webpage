@@ -81,6 +81,11 @@ const SchoolClass = ({ cubeMoveRef, runAnims }: any) => {
                 runAnims[1][0].start('out');
                 runAnims[1][1].current = false;
             }
+
+            if(ref.current.position.z !== 0) ref.current.position.z = 0;
+            if(cubeMoveRef.current.visible)cubeMoveRef.current.visible = false;
+            if(state.camera.position.y !== 5) state.camera.position.y = 5;
+
         }
         else if(data.offset <= breakPoint[1]){
             if(ref.current.rotation.y !== -data.offset * 6 * Math.PI - (Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) - 1) * Math.PI * 0.4)
@@ -89,15 +94,22 @@ const SchoolClass = ({ cubeMoveRef, runAnims }: any) => {
                 ref.current.position.z = -Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 7 + 7;
             if(state.camera.position.y !== 5 + Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 1.2 - 1.2)
                 state.camera.position.y = 5 + Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 1.2 - 1.2;
+
+            if(ref.current.rotation.x !== 0)ref.current.rotation.x = 0;
         }
         else if(data.offset <= breakPoint[2]){
             if(ref.current.position.z !== -Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 7 + 7)
                 ref.current.position.z = -Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 7 + 7;
             if(state.camera.position.y !== 5 + Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 1.2 - 1.2)
                 state.camera.position.y = 5 + Math.sin((data.offset - breakPoint[0]) * 5 * Math.PI + Math.PI/2) * 1.2 - 1.2;
+
+            if(ref.current.rotation.x !== Math.sin((data.offset - breakPoint[1]) * 10 * Math.PI + Math.PI/2) * 0.07 - 0.07)
+                ref.current.rotation.x = Math.sin((data.offset - breakPoint[1]) * 10 * Math.PI + Math.PI/2) * 0.07 - 0.07;
+
             if(ref.current.rotation.y !== 2* Math.PI)
                 ref.current.rotation.y = 2 * Math.PI;
             if(!sinVisible) setSinVisible(true);
+            if(cubeMoveRef.current.visible)cubeMoveRef.current.visible = false;
         }
         else if(data.offset <= breakPoint[3]){
             if(ref.current.position.z !== -Math.sin(Math.PI + Math.PI/2) * 7 + 7)
@@ -107,15 +119,20 @@ const SchoolClass = ({ cubeMoveRef, runAnims }: any) => {
             if(ref.current.position.y !== 0)
                 ref.current.position.y = 0;
             if(!sinVisible) setSinVisible(true);
+
+            if(cubeMoveRef.current.visible)cubeMoveRef.current.visible = false;
         }
         else{
             if(ref.current.position.y !== Math.sin((data.offset - breakPoint[3]) * 5 * Math.PI + Math.PI/2) * 5 - 5 && data.offset <= breakPoint[4])
                 ref.current.position.y = Math.sin((data.offset - breakPoint[3]) * 5 * Math.PI + Math.PI/2) * 5 - 5;
+
             if(sinVisible && data.offset > 0.73) setSinVisible(false);
             if(!sinVisible && data.offset < 0.7) setSinVisible(true);
-            
-            if(!cubeMoveRef.current.visible && data.offset > 0.61) cubeMoveRef.current.visible = true;
-            else if(cubeMoveRef.current.visible && data.offset < 0.6) cubeMoveRef.current.visible = false;
+            if(ref.current.position.z !== -Math.sin(Math.PI + Math.PI/2) * 7 + 7)
+                ref.current.position.z = -Math.sin(Math.PI + Math.PI/2) * 7 + 7;
+
+            if(!cubeMoveRef.current.visible && data.offset > 0.59) cubeMoveRef.current.visible = true;
+            else if(cubeMoveRef.current.visible && data.offset < 0.58) cubeMoveRef.current.visible = false;
 
             if(runAnims[2][1].current && data.offset < 0.75){
                 runAnims[2][0].start('in')
