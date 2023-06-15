@@ -47,7 +47,7 @@ const App = () => {
   return (
       <div className='bg w-screen h-screen'>
         <Canvas camera={{ position: [0, 5, 12] }} shadows>
-          <ambientLight intensity={0.017} />
+          <ambientLight intensity={0.047} />
           <ScrollControls pages={8} damping={0.15}>
             <SchoolClass cubeMoveRef={cubeMoveRef} runAnims={runAnims} />
             <Cube sliders={sliders} cubeMoveRef={cubeMoveRef} />
